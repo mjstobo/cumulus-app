@@ -1,0 +1,28 @@
+body {
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    font-family: $roboto;
+    font-size: 1em;
+}
+
+label {
+    font-family: $slabo;
+    font-size: 1.2em;
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+#app {
+    display: flex;
+    flex-flow: column nowrap;
+    margin: 1%;
+    background-color: $offwhite;
+    border-radius: 5px;
+}
