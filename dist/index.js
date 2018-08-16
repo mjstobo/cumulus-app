@@ -361,10 +361,21 @@ var Cumulus = function (_React$Component) {
                     _react2.default.createElement(
                         'li',
                         { className: 'list-item' },
-                        list.date,
-                        ': ',
+                        _react2.default.createElement(
+                            'label',
+                            { className: 'results__label' },
+                            list.date,
+                            ':'
+                        ),
+                        ' ',
                         list.temp,
-                        ', Maximum: ',
+                        ', ',
+                        _react2.default.createElement(
+                            'label',
+                            { className: 'results__label' },
+                            'Maximum:'
+                        ),
+                        ' ',
                         list.maxTemp,
                         '.'
                     )
@@ -409,38 +420,39 @@ var Cumulus = function (_React$Component) {
                 _react2.default.createElement(
                     'div',
                     { className: 'search-form__results' },
-                    _react2.default.createElement('br', null),
                     _react2.default.createElement(
-                        'label',
+                        'p',
                         null,
-                        'City:'
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'City:'
+                        ),
+                        ' ',
+                        this.state.cityName
                     ),
-                    ' ',
-                    this.state.cityName,
-                    _react2.default.createElement('br', null),
                     _react2.default.createElement(
-                        'label',
-                        null,
-                        'Temperature:'
+                        'div',
+                        { className: 'results__group' },
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'Temperature:',
+                            this.state.temperature
+                        ),
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'Weather: ',
+                            this.state.weatherType
+                        ),
+                        _react2.default.createElement(
+                            'label',
+                            null,
+                            'Date: \xA0 ',
+                            this.handleDateConversionToWeekday(this.state.testDate)
+                        )
                     ),
-                    ' ',
-                    this.state.temperature,
-                    _react2.default.createElement('br', null),
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Weather:'
-                    ),
-                    ' ',
-                    this.state.weatherType,
-                    _react2.default.createElement('br', null),
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Date:'
-                    ),
-                    ' ',
-                    this.handleDateConversionToWeekday(this.state.testDate),
                     _react2.default.createElement('br', null),
                     _react2.default.createElement(
                         'label',

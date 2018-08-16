@@ -235,7 +235,7 @@ getForecastWeather(cityID, firstResponse, callback){
     displayForecastList(list){
             const listItems = list.map((list) =>
             <div className="list-tile">
-            <li className="list-item">{list.date}: {list.temp}, Maximum: {list.maxTemp}.</li></div>);
+            <li className="list-item"><label className="results__label">{list.date}:</label> {list.temp}, <label className="results__label">Maximum:</label> {list.maxTemp}.</li></div>);
         this.setState({
             forecastList: listItems
         });
@@ -255,15 +255,13 @@ getForecastWeather(cityID, firstResponse, callback){
             <label> Fahrenheit <input type="radio" value="imperial" checked={this.state.selectOption === 'imperial'} onChange={this.handleOptionChange} /></label>
             </div>
             <div className="search-form__results">
-                <br />
-                <label>City:</label> {this.state.cityName}
-                <br />
-                <label>Temperature:</label> {this.state.temperature}
-                <br />
-                <label>Weather:</label> {this.state.weatherType}
-                <br />
-                <label>Date:</label> {this.handleDateConversionToWeekday(this.state.testDate)}
-                <br />
+            <p><label>City:</label> {this.state.cityName}</p>
+                <div className="results__group">
+                <label>Temperature:{this.state.temperature}</label>
+                <label>Weather: {this.state.weatherType}</label>
+                <label>Date: &nbsp; {this.handleDateConversionToWeekday(this.state.testDate)}</label>
+                </div>
+                <br/>
                 <label>Forecast:</label> <div className="search-form__results__list">{this.state.forecastList}</div>
             </div>
             </form>
