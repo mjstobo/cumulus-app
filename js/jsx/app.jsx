@@ -250,7 +250,7 @@ getForecastWeather(cityID, firstResponse, callback){
         <form onSubmit={this.onSubmit} className="search-form">
           <div class="search-form__search-group"><input type="text" value={this.state.searchTerm} onChange={this.onHandleChange} className="search-form__searchbar" />           
             <button className="search-form__search-bar__button" type="submit">Search now</button></div>
-            <div className="radio-group">
+            <div className="search-form__radio-group">
             <label> Celsius <input type="radio" value="metric" checked={this.state.selectOption === 'metric'} onChange={this.handleOptionChange} /></label>
             <label> Fahrenheit <input type="radio" value="imperial" checked={this.state.selectOption === 'imperial'} onChange={this.handleOptionChange} /></label>
             </div>

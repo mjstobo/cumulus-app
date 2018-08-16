@@ -91,6 +91,11 @@ label {
           justify-content: space-evenly;
   padding: 1%; }
 
+.search-form__radio-group {
+  padding: 1%; }
+  .search-form__radio-group label {
+    margin-left: 10px; }
+
 .results__group {
   background-color: #dad6d6;
   display: -webkit-box;
@@ -101,7 +106,7 @@ label {
       -ms-flex-flow: column;
           flex-flow: column;
   padding: 2%;
-  width: 60%; }
+  width: 70%; }
 
 .results__group * {
   margin: 5px; }

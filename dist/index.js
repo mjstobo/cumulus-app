@@ -403,7 +403,7 @@ var Cumulus = function (_React$Component) {
                 ),
                 _react2.default.createElement(
                     'div',
-                    { className: 'radio-group' },
+                    { className: 'search-form__radio-group' },
                     _react2.default.createElement(
                         'label',
                         null,
