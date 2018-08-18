@@ -275,8 +275,33 @@ var Cumulus = function (_React$Component) {
         }
     }, {
         key: 'retrieveWeatherIcon',
-        value: function retrieveWeatherIcon() {
-            return 0;
+        value: function retrieveWeatherIcon(weatherType) {
+            var forecastWeather = weatherType.toLowerCase();
+            var weatherIcon = '';
+
+            switch (forecastWeather) {
+                case 'rain':
+                    weatherIcon = './img/004-rain.svg';
+
+                    break;
+
+                case 'clear':
+                    weatherIcon = './img/003-sun.svg';
+
+                    break;
+
+                case 'clouds':
+                    weatherIcon = './img/005-cloud.svg';
+
+                    break;
+
+                default:
+                    weatherIcon = './img/003-sun.svg';
+
+                    break;
+            }
+
+            return weatherIcon;
         }
     }, {
         key: 'processForecastData',
@@ -355,8 +380,6 @@ var Cumulus = function (_React$Component) {
 
                     // Retrieve Weather icon path
 
-                    //this.retrieveWeatherIcon(currDayWeather);
-
 
                     // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
 
@@ -365,7 +388,7 @@ var Cumulus = function (_React$Component) {
                         temp: tempTotal.toFixed(0),
                         maxTemp: maxTemp.toFixed(0),
                         weatherType: currDayWeather,
-                        weatherIcon: './img/003-sun.svg'
+                        weatherIcon: this.retrieveWeatherIcon(currDayWeather)
                     };
 
                     weatherAggregate.push(tempDate);

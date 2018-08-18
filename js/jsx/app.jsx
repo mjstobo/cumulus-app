@@ -155,8 +155,33 @@ getForecastWeather(cityID, firstResponse, callback){
         return sortedDays;
     }
 
-    retrieveWeatherIcon(){
-        return 0;
+    retrieveWeatherIcon(weatherType){
+        let forecastWeather = weatherType.toLowerCase();
+        let weatherIcon = '';
+
+        switch(forecastWeather) {
+            case 'rain':
+            weatherIcon = './img/004-rain.svg';
+        
+            break;
+
+            case 'clear':
+            weatherIcon = './img/003-sun.svg';
+            
+            break;
+
+            case 'clouds':
+            weatherIcon = './img/005-cloud.svg';
+
+            break;
+
+            default:
+            weatherIcon = './img/003-sun.svg';
+
+            break;
+        }
+
+        return weatherIcon;
     }
    
 
@@ -233,7 +258,7 @@ getForecastWeather(cityID, firstResponse, callback){
 
                 // Retrieve Weather icon path
 
-               //this.retrieveWeatherIcon(currDayWeather);
+                
 
 
                 // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
@@ -243,7 +268,7 @@ getForecastWeather(cityID, firstResponse, callback){
                     temp: tempTotal.toFixed(0),
                     maxTemp: maxTemp.toFixed(0),
                     weatherType: currDayWeather,
-                    weatherIcon: './img/003-sun.svg'
+                    weatherIcon: this.retrieveWeatherIcon(currDayWeather)
                 };
 
                 weatherAggregate.push(tempDate);
