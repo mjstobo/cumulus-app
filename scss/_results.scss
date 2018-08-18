@@ -1,0 +1,60 @@
+.results-tiles {
+    width: 25%;
+    min-height: 50px;
+}
+
+.tile {
+    display: flex;
+    flex-flow:  row nowrap;
+
+    list-style: none;
+    background-color: $grey;
+    padding: 0.5%;
+    margin: 2%;
+
+    color: white;
+    border-radius: 10px;
+
+    & img {
+        width: 20%;
+        height: auto;
+        fill: white;
+        margin-left: -5px;
+    }
+}
+
+.tile__data{
+    list-style: none;
+    box-sizing: border-box;
+    width: 80%;
+    font-size: 1.1em;
+}
+
+.tile__data__label {
+    color: $black;
+
+    &--primary {
+        font-size: 1.3em;
+        color: $silver;
+        padding: 1%;
+    }
+
+    &--weather {
+        font-size: 1.1em;
+        color: white;
+        padding: 1%;
+    }
+
+}
+
+.results__group {
+    background-color: $silver;
+    display: flex;
+    flex-flow: column;
+    padding: 2%;
+    width: 70%;
+}
+
+.results__group * {
+    margin: 5px;
+}

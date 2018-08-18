@@ -31,6 +31,7 @@ export default class Cumulus extends React.Component {
         this.sortDates = this.sortDates.bind(this);
         this.processForecastData = this.processForecastData.bind(this);
         this.displayForecastList = this.displayForecastList.bind(this);
+        this.retrieveWeatherIcon = this.retrieveWeatherIcon.bind(this);
     }
    
     initSearch(searchTerm, inputUnit){
@@ -154,6 +155,9 @@ getForecastWeather(cityID, firstResponse, callback){
         return sortedDays;
     }
 
+    retrieveWeatherIcon(){
+        return 0;
+    }
    
 
     processForecastData(){
@@ -170,50 +174,76 @@ getForecastWeather(cityID, firstResponse, callback){
         data = this.state.forecastData.data.list;
         console.log(data);
 
-        const groups = data.reduce((groups, day) =>{
+        //Reduce data into days of the week by matching dateTime to Weekday.
+
+        const weekdays = data.reduce((weekdays, day) =>{
             date = this.handleDateConversionToWeekday(day.dt);
             console.log(date);
-            if(!groups[date]) {
-                groups[date] = [];
+            if(!weekdays[date]) {
+                weekdays[date] = [];
             }
-            groups[date].push(day);
-            return groups;
+            weekdays[date].push(day);
+            return weekdays;
         }, {});
 
-        console.log(groups);
+        console.log(weekdays);
 
-        let sortedGroups = this.sortDates(groups);
+        // Setup to reduce weather information into each Weekeday
+
         let weatherAggregate = [];
         let tempTotal = 0;
         let tempStore = [];
+        let currDayWeather = "";
 
-        let dateAggregate = [];
+        /* Loop through each record within each weekday, and output:
+            - Average temp
+            - Maximum temp
+            - Minimum Temp - to be implemented
+            - Weather Type
+        */
 
-        for(var record in groups){
-            if(groups.hasOwnProperty(record)) {
+        for(var record in weekdays){
+            if(weekdays.hasOwnProperty(record)) {
 
-                var currDay = groups[record];
+                let currDay = weekdays[record];
                 let convDate = this.handleDateConversionToWeekday(currDay[0].dt);
+                currDayWeather = currDay[0].weather[0].main;
+                console.log("Curr Weather = " + currDayWeather);
 
                  for(var subData in currDay){
-                    var currTemp = currDay[subData].main.temp;
+                    let currTemp = currDay[subData].main.temp;
                     tempStore.push(currTemp);
                 }
 
+                // For each temperature, go through and calculate total. 
+
                 tempStore.forEach(temp => {
                     tempTotal = tempTotal + temp;
-                    console.log("Temperature is " + temp);
                 });
 
+                // Calc average temperature
+
                 tempTotal = tempTotal / tempStore.length;
+
+                // Use reduce to work through each day to determine the maximum temperature.
+
                 const maxTemp = currDay.reduce(function(previous, record) {
                     return previous === undefined || record.main.temp_max > previous ? record.main.temp_max : previous;
                 }, undefined);
 
+                // Retrieve Weather icon path
+
+               //this.retrieveWeatherIcon(currDayWeather);
+
+
+                // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
+
                 let tempDate = {
                     date: convDate,
-                    temp: tempTotal.toFixed(2),
-                    maxTemp: maxTemp
+                    temp: tempTotal.toFixed(0),
+                    maxTemp: maxTemp.toFixed(0),
+                    weatherType: currDayWeather,
+                    weatherIcon: './img/003-sun.svg'
                 };
 
                 weatherAggregate.push(tempDate);
@@ -223,9 +253,6 @@ getForecastWeather(cityID, firstResponse, callback){
             }
         }
 
-       console.log(weatherAggregate);
-        console.log("current temperature " + this.state.temperature);
-
        this.displayForecastList(weatherAggregate);
        this.setState({
            forecastTemps: weatherAggregate
@@ -234,21 +261,27 @@ getForecastWeather(cityID, firstResponse, callback){
 
     displayForecastList(list){
             const listItems = list.map((list) =>
-            <div className="list-tile">
-            <li className="list-item"><label className="results__label">{list.date}:</label> {list.temp}, <label className="results__label">Maximum:</label> {list.maxTemp}.</li></div>);
+            <div className="results-tiles">
+    <li className="tile"> 
+    <ul className="tile__data">
+        <li><label className="tile__data__label--primary">{list.date}</label></li>
+        <li><label className="tile__data__label--weather">{list.weatherType}</label></li>
+        <li><label className="tile__data__label">Average:</label> {list.temp}&deg;</li>
+        <li><label className="tile__data__label">Maximum:</label> {list.maxTemp}&deg; </li>
+        </ul>
+       <img src={list.weatherIcon}/>     
+    </li>     
+</div>);
         this.setState({
             forecastList: listItems
         });
     }
 
 
-
-
-
     render(){
         return (
         <form onSubmit={this.onSubmit} className="search-form">
-          <div class="search-form__search-group"><input type="text" value={this.state.searchTerm} onChange={this.onHandleChange} className="search-form__searchbar" />           
+          <div className="search-form__search-group"><input type="text" value={this.state.searchTerm} onChange={this.onHandleChange} className="search-form__searchbar" />           
             <button className="search-form__search-bar__button" type="submit">Search now</button></div>
             <div className="search-form__radio-group">
             <label> Celsius <input type="radio" value="metric" checked={this.state.selectOption === 'metric'} onChange={this.handleOptionChange} /></label>
@@ -257,12 +290,12 @@ getForecastWeather(cityID, firstResponse, callback){
             <div className="search-form__results">
             <p><label>City:</label> {this.state.cityName}</p>
                 <div className="results__group">
-                <label>Temperature:{this.state.temperature}</label>
+                <label>Current Temperature: {this.state.temperature}&deg;</label>
                 <label>Weather: {this.state.weatherType}</label>
                 <label>Date: &nbsp; {this.handleDateConversionToWeekday(this.state.testDate)}</label>
                 </div>
                 <br/>
-                <label>Forecast:</label> <div className="search-form__results__list">{this.state.forecastList}</div>
+                <label>Forecast:</label> <div className="search-form__results__tiles">{this.state.forecastList}</div>
             </div>
             </form>
         )}

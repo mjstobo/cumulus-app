@@ -59,40 +59,11 @@
 }
 
 
-.results__group {
-    background-color: $silver;
-    display: flex;
-    flex-flow: column;
-    padding: 2%;
-    width: 70%;
-}
-
-.results__group * {
-    margin: 5px;
-}
-
-.search-form__results__list {
+.search-form__results__tiles {
     display: flex;
     align-content: center;
-    flex-flow: row;
+    flex-flow: row wrap;
     height: auto;
     width: 100%;
     margin: 2%;
-
-
-    & ul {
-        display: inline-block;
-    }
-    & li {
-        background-color: $black;
-        color: white;
-        padding: 30px;
-        text-decoration: none;
-        list-style: none;
-    }
-
-}
-
-.results__label {
-    color: $red;
 }

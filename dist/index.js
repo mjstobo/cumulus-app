@@ -140,6 +140,7 @@ var Cumulus = function (_React$Component) {
         _this.sortDates = _this.sortDates.bind(_this);
         _this.processForecastData = _this.processForecastData.bind(_this);
         _this.displayForecastList = _this.displayForecastList.bind(_this);
+        _this.retrieveWeatherIcon = _this.retrieveWeatherIcon.bind(_this);
         return _this;
     }
 
@@ -273,6 +274,11 @@ var Cumulus = function (_React$Component) {
             return sortedDays;
         }
     }, {
+        key: 'retrieveWeatherIcon',
+        value: function retrieveWeatherIcon() {
+            return 0;
+        }
+    }, {
         key: 'processForecastData',
         value: function processForecastData() {
             var _this4 = this;
@@ -290,50 +296,76 @@ var Cumulus = function (_React$Component) {
             data = this.state.forecastData.data.list;
             console.log(data);
 
-            var groups = data.reduce(function (groups, day) {
+            //Reduce data into days of the week by matching dateTime to Weekday.
+
+            var weekdays = data.reduce(function (weekdays, day) {
                 date = _this4.handleDateConversionToWeekday(day.dt);
                 console.log(date);
-                if (!groups[date]) {
-                    groups[date] = [];
+                if (!weekdays[date]) {
+                    weekdays[date] = [];
                 }
-                groups[date].push(day);
-                return groups;
+                weekdays[date].push(day);
+                return weekdays;
             }, {});
 
-            console.log(groups);
+            console.log(weekdays);
 
-            var sortedGroups = this.sortDates(groups);
+            // Setup to reduce weather information into each Weekeday
+
             var weatherAggregate = [];
             var tempTotal = 0;
             var tempStore = [];
+            var currDayWeather = "";
 
-            var dateAggregate = [];
+            /* Loop through each record within each weekday, and output:
+                - Average temp
+                - Maximum temp
+                - Minimum Temp - to be implemented
+                - Weather Type
+            */
 
-            for (var record in groups) {
-                if (groups.hasOwnProperty(record)) {
+            for (var record in weekdays) {
+                if (weekdays.hasOwnProperty(record)) {
 
-                    var currDay = groups[record];
+                    var currDay = weekdays[record];
                     var convDate = this.handleDateConversionToWeekday(currDay[0].dt);
+                    currDayWeather = currDay[0].weather[0].main;
+                    console.log("Curr Weather = " + currDayWeather);
 
                     for (var subData in currDay) {
                         var currTemp = currDay[subData].main.temp;
                         tempStore.push(currTemp);
                     }
 
+                    // For each temperature, go through and calculate total. 
+
                     tempStore.forEach(function (temp) {
                         tempTotal = tempTotal + temp;
-                        console.log("Temperature is " + temp);
                     });
 
+                    // Calc average temperature
+
                     tempTotal = tempTotal / tempStore.length;
+
+                    // Use reduce to work through each day to determine the maximum temperature.
+
                     var maxTemp = currDay.reduce(function (previous, record) {
                         return previous === undefined || record.main.temp_max > previous ? record.main.temp_max : previous;
                     }, undefined);
 
+                    // Retrieve Weather icon path
+
+                    //this.retrieveWeatherIcon(currDayWeather);
+
+
+                    // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
+
                     var tempDate = {
                         date: convDate,
-                        temp: tempTotal.toFixed(2),
-                        maxTemp: maxTemp
+                        temp: tempTotal.toFixed(0),
+                        maxTemp: maxTemp.toFixed(0),
+                        weatherType: currDayWeather,
+                        weatherIcon: './img/003-sun.svg'
                     };
 
                     weatherAggregate.push(tempDate);
@@ -342,9 +374,6 @@ var Cumulus = function (_React$Component) {
                     tempTotal = 0;
                 }
             }
-
-            console.log(weatherAggregate);
-            console.log("current temperature " + this.state.temperature);
 
             this.displayForecastList(weatherAggregate);
             this.setState({
@@ -357,27 +386,57 @@ var Cumulus = function (_React$Component) {
             var listItems = list.map(function (list) {
                 return _react2.default.createElement(
                     'div',
-                    { className: 'list-tile' },
+                    { className: 'results-tiles' },
                     _react2.default.createElement(
                         'li',
-                        { className: 'list-item' },
+                        { className: 'tile' },
                         _react2.default.createElement(
-                            'label',
-                            { className: 'results__label' },
-                            list.date,
-                            ':'
+                            'ul',
+                            { className: 'tile__data' },
+                            _react2.default.createElement(
+                                'li',
+                                null,
+                                _react2.default.createElement(
+                                    'label',
+                                    { className: 'tile__data__label--primary' },
+                                    list.date
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'li',
+                                null,
+                                _react2.default.createElement(
+                                    'label',
+                                    { className: 'tile__data__label--weather' },
+                                    list.weatherType
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'li',
+                                null,
+                                _react2.default.createElement(
+                                    'label',
+                                    { className: 'tile__data__label' },
+                                    'Average:'
+                                ),
+                                ' ',
+                                list.temp,
+                                '\xB0'
+                            ),
+                            _react2.default.createElement(
+                                'li',
+                                null,
+                                _react2.default.createElement(
+                                    'label',
+                                    { className: 'tile__data__label' },
+                                    'Maximum:'
+                                ),
+                                ' ',
+                                list.maxTemp,
+                                '\xB0 '
+                            )
                         ),
-                        ' ',
-                        list.temp,
-                        ', ',
-                        _react2.default.createElement(
-                            'label',
-                            { className: 'results__label' },
-                            'Maximum:'
-                        ),
-                        ' ',
-                        list.maxTemp,
-                        '.'
+                        _react2.default.createElement('img', { src: list.weatherIcon })
                     )
                 );
             });
@@ -393,7 +452,7 @@ var Cumulus = function (_React$Component) {
                 { onSubmit: this.onSubmit, className: 'search-form' },
                 _react2.default.createElement(
                     'div',
-                    { 'class': 'search-form__search-group' },
+                    { className: 'search-form__search-group' },
                     _react2.default.createElement('input', { type: 'text', value: this.state.searchTerm, onChange: this.onHandleChange, className: 'search-form__searchbar' }),
                     _react2.default.createElement(
                         'button',
@@ -437,8 +496,9 @@ var Cumulus = function (_React$Component) {
                         _react2.default.createElement(
                             'label',
                             null,
-                            'Temperature:',
-                            this.state.temperature
+                            'Current Temperature: ',
+                            this.state.temperature,
+                            '\xB0'
                         ),
                         _react2.default.createElement(
                             'label',
@@ -462,7 +522,7 @@ var Cumulus = function (_React$Component) {
                     ' ',
                     _react2.default.createElement(
                         'div',
-                        { className: 'search-form__results__list' },
+                        { className: 'search-form__results__tiles' },
                         this.state.forecastList
                     )
                 )
