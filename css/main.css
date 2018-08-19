@@ -21,7 +21,7 @@ label {
           align-items: center;
   width: 100vw;
   height: auto;
-  min-height: 100vh; }
+  min-height: 60vh; }
 
 #app {
   display: -webkit-box;
@@ -186,3 +186,21 @@ label {
 
 .results__group * {
   margin: 5px; }
+
+.hero-banner {
+  width: 100%;
+  min-height: 150px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center; }
+
+.hero-banner__heading {
+  font-family: "Roboto", sans-serif;
+  font-size: 2.5em;
+  color: #01BAEF; }

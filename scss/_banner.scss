@@ -1,0 +1,13 @@
+.hero-banner {
+    width: 100%;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-banner__heading {
+    font-family: $roboto;
+    font-size: 2.5em;
+    color: $colour--primary;
+}

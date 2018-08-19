@@ -308,13 +308,7 @@ getForecastWeather(cityID, firstResponse, callback){
             <label> Fahrenheit <input type="radio" value="imperial" checked={this.state.selectOption === 'imperial'} onChange={this.handleOptionChange} /></label>
             </div>
             <div className="search-form__results">
-            <p><h1>{this.state.cityName}</h1></p>
-                <div className="results__group">
-                <label>Current Temperature: {this.state.temperature}&deg;</label>
-                <label>Weather: {this.state.weatherType}</label>
-                <label>Date: &nbsp; {this.handleDateConversionToWeekday(this.state.testDate)}</label>
-                </div>
-                <br/>
+            <h1>{this.state.cityName}</h1>
                 <div className="search-form__results__tiles">{this.state.forecastList}</div>
             </div>
             </form>

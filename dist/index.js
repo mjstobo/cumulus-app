@@ -500,38 +500,10 @@ var Cumulus = function (_React$Component) {
                     'div',
                     { className: 'search-form__results' },
                     _react2.default.createElement(
-                        'p',
+                        'h1',
                         null,
-                        _react2.default.createElement(
-                            'h1',
-                            null,
-                            this.state.cityName
-                        )
+                        this.state.cityName
                     ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'results__group' },
-                        _react2.default.createElement(
-                            'label',
-                            null,
-                            'Current Temperature: ',
-                            this.state.temperature,
-                            '\xB0'
-                        ),
-                        _react2.default.createElement(
-                            'label',
-                            null,
-                            'Weather: ',
-                            this.state.weatherType
-                        ),
-                        _react2.default.createElement(
-                            'label',
-                            null,
-                            'Date: \xA0 ',
-                            this.handleDateConversionToWeekday(this.state.testDate)
-                        )
-                    ),
-                    _react2.default.createElement('br', null),
                     _react2.default.createElement(
                         'div',
                         { className: 'search-form__results__tiles' },
