@@ -1,10 +1,11 @@
 body {
-    background-color: white;
+    background-color: $colour--neutral;
     height: 100%;
     width: 100%;
     font-family: $roboto;
     font-size: 1em;
 }
+
 
 label {
     font-family: $slabo;
@@ -16,13 +17,20 @@ label {
     justify-content: center;
     align-items: center;
     width: 100vw;
-    height: 100vh;
+    height: auto;
+    min-height: 100vh;
+
 }
 
 #app {
     display: flex;
     flex-flow: column nowrap;
     margin: 1%;
-    background-color: $offwhite;
+    background-color: white;
     border-radius: 5px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+* {
+    transition: all 0.2s ease-in-out;
 }

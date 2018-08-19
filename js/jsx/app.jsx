@@ -254,12 +254,7 @@ getForecastWeather(cityID, firstResponse, callback){
 
                 const maxTemp = currDay.reduce(function(previous, record) {
                     return previous === undefined || record.main.temp_max > previous ? record.main.temp_max : previous;
-                }, undefined);
-
-                // Retrieve Weather icon path
-
-                
-
+                }, undefined);   
 
                 // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
 
@@ -313,14 +308,14 @@ getForecastWeather(cityID, firstResponse, callback){
             <label> Fahrenheit <input type="radio" value="imperial" checked={this.state.selectOption === 'imperial'} onChange={this.handleOptionChange} /></label>
             </div>
             <div className="search-form__results">
-            <p><label>City:</label> {this.state.cityName}</p>
+            <p><h1>{this.state.cityName}</h1></p>
                 <div className="results__group">
                 <label>Current Temperature: {this.state.temperature}&deg;</label>
                 <label>Weather: {this.state.weatherType}</label>
                 <label>Date: &nbsp; {this.handleDateConversionToWeekday(this.state.testDate)}</label>
                 </div>
                 <br/>
-                <label>Forecast:</label> <div className="search-form__results__tiles">{this.state.forecastList}</div>
+                <div className="search-form__results__tiles">{this.state.forecastList}</div>
             </div>
             </form>
         )}

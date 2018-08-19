@@ -378,9 +378,6 @@ var Cumulus = function (_React$Component) {
                         return previous === undefined || record.main.temp_max > previous ? record.main.temp_max : previous;
                     }, undefined);
 
-                    // Retrieve Weather icon path
-
-
                     // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
 
                     var tempDate = {
@@ -506,12 +503,10 @@ var Cumulus = function (_React$Component) {
                         'p',
                         null,
                         _react2.default.createElement(
-                            'label',
+                            'h1',
                             null,
-                            'City:'
-                        ),
-                        ' ',
-                        this.state.cityName
+                            this.state.cityName
+                        )
                     ),
                     _react2.default.createElement(
                         'div',
@@ -537,12 +532,6 @@ var Cumulus = function (_React$Component) {
                         )
                     ),
                     _react2.default.createElement('br', null),
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        'Forecast:'
-                    ),
-                    ' ',
                     _react2.default.createElement(
                         'div',
                         { className: 'search-form__results__tiles' },
