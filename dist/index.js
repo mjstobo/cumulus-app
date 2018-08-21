@@ -118,6 +118,7 @@ var Cumulus = function (_React$Component) {
         _this.state = {
             searchTerm: '',
             currSearchResult: [],
+            currentDay: '',
             appID: 'ad68367b5cd8c50e58be5a2923aa7ff4',
             temperature: '',
             cityName: '',
@@ -166,8 +167,6 @@ var Cumulus = function (_React$Component) {
     }, {
         key: 'getForecastWeather',
         value: function getForecastWeather(cityID, firstResponse, callback) {
-            var _this3 = this;
-
             var self = this;
             _axios2.default.get('http://api.openweathermap.org/data/2.5/forecast?id=' + cityID + '&APPID=' + this.state.appID + '&units=' + this.state.selectOption).then(function (response) {
                 self.setState({
@@ -181,8 +180,6 @@ var Cumulus = function (_React$Component) {
                     forecastList: [],
                     hasRequested: true
                 });
-                console.log("forecast added to state " + _this3.state.forecastData.toString());
-                console.log("date " + _this3.state.testDate);
                 callback();
             }).catch(function (error) {
                 console.log(error);
@@ -224,20 +221,21 @@ var Cumulus = function (_React$Component) {
     }, {
         key: 'handleOptionChange',
         value: function handleOptionChange(event) {
-            console.log(this.state.selectOption);
             this.setState({ selectOption: event.target.value });
             var forecastTemps = this.state.forecastTemps;
 
             for (var temp in forecastTemps) {
                 var updatedTemp = this.changeTemperature(forecastTemps[temp].temp);
+                var updatedMaxTemp = this.changeTemperature(forecastTemps[temp].maxTemp);
                 forecastTemps[temp].temp = updatedTemp.toFixed(2);
+                forecastTemps[temp].maxTemp = updatedMaxTemp.toFixed(2);
+                console.log('​handleOptionChange -> forecastTemps[temp].maxTemp', forecastTemps[temp].maxTemp);
             }
 
             this.setState({
                 forecastTemps: forecastTemps
             });
 
-            console.log(this.state.forecastTemps);
             this.displayForecastList(this.state.forecastTemps);
             this.changeTemperature();
         }
@@ -306,7 +304,7 @@ var Cumulus = function (_React$Component) {
     }, {
         key: 'processForecastData',
         value: function processForecastData() {
-            var _this4 = this;
+            var _this3 = this;
 
             //Get array of data from state
             var data = [];
@@ -319,21 +317,17 @@ var Cumulus = function (_React$Component) {
             var day5 = new Object();
 
             data = this.state.forecastData.data.list;
-            console.log(data);
 
             //Reduce data into days of the week by matching dateTime to Weekday.
 
             var weekdays = data.reduce(function (weekdays, day) {
-                date = _this4.handleDateConversionToWeekday(day.dt);
-                console.log(date);
+                date = _this3.handleDateConversionToWeekday(day.dt);
                 if (!weekdays[date]) {
                     weekdays[date] = [];
                 }
                 weekdays[date].push(day);
                 return weekdays;
             }, {});
-
-            console.log(weekdays);
 
             // Setup to reduce weather information into each Weekeday
 
@@ -355,7 +349,6 @@ var Cumulus = function (_React$Component) {
                     var currDay = weekdays[record];
                     var convDate = this.handleDateConversionToWeekday(currDay[0].dt);
                     currDayWeather = currDay[0].weather[0].main;
-                    console.log("Curr Weather = " + currDayWeather);
 
                     for (var subData in currDay) {
                         var currTemp = currDay[subData].main.temp;
@@ -396,6 +389,8 @@ var Cumulus = function (_React$Component) {
             }
 
             this.displayForecastList(weatherAggregate);
+            console.log('​processForecastData -> weatherAggregate', weatherAggregate);
+
             this.setState({
                 forecastTemps: weatherAggregate
             });
@@ -503,6 +498,11 @@ var Cumulus = function (_React$Component) {
                         'h1',
                         null,
                         this.state.cityName
+                    ),
+                    _react2.default.createElement(
+                        'h3',
+                        null,
+                        this.handleDateConversionToWeekday(this.state.currentDay)
                     ),
                     _react2.default.createElement(
                         'div',

@@ -9,6 +9,7 @@ export default class Cumulus extends React.Component {
         this.state = {
             searchTerm: '',
             currSearchResult: [],
+            currentDay: '',
             appID: 'ad68367b5cd8c50e58be5a2923aa7ff4',
             temperature: '',
             cityName: '',
@@ -66,8 +67,6 @@ getForecastWeather(cityID, firstResponse, callback){
             forecastList: [],
             hasRequested: true
         });
-        console.log("forecast added to state " + this.state.forecastData.toString());
-        console.log("date " + this.state.testDate);
         callback();
     })
     .catch(function (error) {
@@ -106,20 +105,21 @@ getForecastWeather(cityID, firstResponse, callback){
     }
 
     handleOptionChange(event){
-        console.log(this.state.selectOption);
         this.setState({selectOption: event.target.value});
         let forecastTemps = this.state.forecastTemps
 
         for(var temp in forecastTemps){
             let updatedTemp = this.changeTemperature(forecastTemps[temp].temp);
+            let updatedMaxTemp = this.changeTemperature(forecastTemps[temp].maxTemp);
             forecastTemps[temp].temp = updatedTemp.toFixed(2);
+            forecastTemps[temp].maxTemp = updatedMaxTemp.toFixed(2);
+            console.log('​handleOptionChange -> forecastTemps[temp].maxTemp', forecastTemps[temp].maxTemp);
         }
 
         this.setState({
             forecastTemps: forecastTemps
         })
 
-        console.log(this.state.forecastTemps);
         this.displayForecastList(this.state.forecastTemps);
         this.changeTemperature();
     }
@@ -127,7 +127,7 @@ getForecastWeather(cityID, firstResponse, callback){
     handleDateConversionToWeekday(unixDate){
 
         var weekday = new Array(7);
-        weekday[0] =  "Sunday";
+        weekday[0] = "Sunday";
         weekday[1] = "Monday";
         weekday[2] = "Tuesday";
         weekday[3] = "Wednesday";
@@ -197,21 +197,17 @@ getForecastWeather(cityID, firstResponse, callback){
         let day5 = new Object;
 
         data = this.state.forecastData.data.list;
-        console.log(data);
 
         //Reduce data into days of the week by matching dateTime to Weekday.
 
         const weekdays = data.reduce((weekdays, day) =>{
             date = this.handleDateConversionToWeekday(day.dt);
-            console.log(date);
             if(!weekdays[date]) {
                 weekdays[date] = [];
             }
             weekdays[date].push(day);
             return weekdays;
         }, {});
-
-        console.log(weekdays);
 
         // Setup to reduce weather information into each Weekeday
 
@@ -233,8 +229,7 @@ getForecastWeather(cityID, firstResponse, callback){
                 let currDay = weekdays[record];
                 let convDate = this.handleDateConversionToWeekday(currDay[0].dt);
                 currDayWeather = currDay[0].weather[0].main;
-                console.log("Curr Weather = " + currDayWeather);
-
+                
                  for(var subData in currDay){
                     let currTemp = currDay[subData].main.temp;
                     tempStore.push(currTemp);
@@ -254,7 +249,7 @@ getForecastWeather(cityID, firstResponse, callback){
 
                 const maxTemp = currDay.reduce(function(previous, record) {
                     return previous === undefined || record.main.temp_max > previous ? record.main.temp_max : previous;
-                }, undefined);   
+                }, undefined);  
 
                 // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
 
@@ -274,6 +269,9 @@ getForecastWeather(cityID, firstResponse, callback){
         }
 
        this.displayForecastList(weatherAggregate);
+       console.log('​processForecastData -> weatherAggregate', weatherAggregate);
+
+    
        this.setState({
            forecastTemps: weatherAggregate
        });
@@ -309,6 +307,7 @@ getForecastWeather(cityID, firstResponse, callback){
             </div>
             <div className="search-form__results">
             <h1>{this.state.cityName}</h1>
+            <h3>{this.handleDateConversionToWeekday(this.state.currentDay)}</h3>
                 <div className="search-form__results__tiles">{this.state.forecastList}</div>
             </div>
             </form>
