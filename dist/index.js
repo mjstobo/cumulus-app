@@ -82,7 +82,7 @@
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -108,413 +108,431 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Cumulus = function (_React$Component) {
-    _inherits(Cumulus, _React$Component);
+  _inherits(Cumulus, _React$Component);
 
-    function Cumulus(props) {
-        _classCallCheck(this, Cumulus);
+  function Cumulus(props) {
+    _classCallCheck(this, Cumulus);
 
-        var _this = _possibleConstructorReturn(this, (Cumulus.__proto__ || Object.getPrototypeOf(Cumulus)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (Cumulus.__proto__ || Object.getPrototypeOf(Cumulus)).call(this, props));
 
-        _this.state = {
-            searchTerm: '',
-            currSearchResult: [],
-            currentDay: '',
-            appID: 'ad68367b5cd8c50e58be5a2923aa7ff4',
-            temperature: '',
-            cityName: '',
-            cityID: '',
-            weatherType: '',
-            selectOption: 'metric',
-            forecastData: [],
-            forecastList: [],
-            forecastTemps: [],
-            testDate: '',
-            hasRequested: false
-        };
-        _this.onHandleChange = _this.onHandleChange.bind(_this);
-        _this.onSubmit = _this.onSubmit.bind(_this);
-        _this.initSearch = _this.initSearch.bind(_this);
-        _this.handleOptionChange = _this.handleOptionChange.bind(_this);
-        _this.changeTemperature = _this.changeTemperature.bind(_this);
-        _this.getForecastWeather = _this.getForecastWeather.bind(_this);
-        _this.handleDateConversionToWeekday = _this.handleDateConversionToWeekday.bind(_this);
-        _this.sortDates = _this.sortDates.bind(_this);
-        _this.processForecastData = _this.processForecastData.bind(_this);
-        _this.displayForecastList = _this.displayForecastList.bind(_this);
-        _this.retrieveWeatherIcon = _this.retrieveWeatherIcon.bind(_this);
-        return _this;
+    _this.state = {
+      searchTerm: "",
+      currSearchResult: [],
+      currentDay: "",
+      appID: "ad68367b5cd8c50e58be5a2923aa7ff4",
+      temperature: "",
+      cityName: "",
+      cityID: "",
+      weatherType: "",
+      selectOption: "metric",
+      forecastData: [],
+      forecastList: [],
+      forecastTemps: [],
+      testDate: "",
+      hasRequested: false
+    };
+    _this.onHandleChange = _this.onHandleChange.bind(_this);
+    _this.onSubmit = _this.onSubmit.bind(_this);
+    _this.initSearch = _this.initSearch.bind(_this);
+    _this.handleOptionChange = _this.handleOptionChange.bind(_this);
+    _this.changeTemperature = _this.changeTemperature.bind(_this);
+    _this.getForecastWeather = _this.getForecastWeather.bind(_this);
+    _this.handleDateConversionToWeekday = _this.handleDateConversionToWeekday.bind(_this);
+    _this.sortDates = _this.sortDates.bind(_this);
+    _this.processForecastData = _this.processForecastData.bind(_this);
+    _this.displayForecastList = _this.displayForecastList.bind(_this);
+    _this.retrieveWeatherIcon = _this.retrieveWeatherIcon.bind(_this);
+    return _this;
+  }
+
+  _createClass(Cumulus, [{
+    key: "initSearch",
+    value: function initSearch(searchTerm, inputUnit) {
+      var self = this;
+      this.getCurrentWeather(searchTerm, inputUnit);
     }
+  }, {
+    key: "getCurrentWeather",
+    value: function getCurrentWeather(searchTerm, inputUnit) {
+      var _this2 = this;
 
-    _createClass(Cumulus, [{
-        key: 'initSearch',
-        value: function initSearch(searchTerm, inputUnit) {
-            var self = this;
-            this.getCurrentWeather(searchTerm, inputUnit);
+      var self = this;
+      _axios2.default.get("http://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&APPID=" + this.state.appID + "&type=like&units=" + inputUnit).then(function (response) {
+        var firstResponse = response;
+        _this2.getForecastWeather(response.data.id, firstResponse, _this2.processForecastData);
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }, {
+    key: "getForecastWeather",
+    value: function getForecastWeather(cityID, firstResponse, callback) {
+      var self = this;
+      _axios2.default.get("http://api.openweathermap.org/data/2.5/forecast?id=" + cityID + "&APPID=" + this.state.appID + "&units=" + this.state.selectOption).then(function (response) {
+        self.setState({
+          currSearchResult: firstResponse,
+          temperature: firstResponse.data.main.temp,
+          cityName: firstResponse.data.name,
+          weatherType: firstResponse.data.weather[0].main,
+          cityID: firstResponse.data.id,
+          forecastData: response,
+          testDate: response.data.list[0].dt,
+          forecastList: [],
+          hasRequested: true
+        });
+        callback();
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  }, {
+    key: "onHandleChange",
+    value: function onHandleChange(event) {
+      this.setState({ searchTerm: event.target.value });
+    }
+  }, {
+    key: "onSubmit",
+    value: function onSubmit(event) {
+      event.preventDefault();
+      this.initSearch(this.state.searchTerm, this.state.selectOption);
+    }
+  }, {
+    key: "changeTemperature",
+    value: function changeTemperature(currTemp) {
+      var temp = this.state.temperature;
+      var updatedTemp = "";
+
+      if (currTemp) {
+        if (this.state.selectOption === "metric") {
+          updatedTemp = currTemp * 1.8 + 32;
+        } else {
+          updatedTemp = (currTemp - 32) / 1.8;
         }
-    }, {
-        key: 'getCurrentWeather',
-        value: function getCurrentWeather(searchTerm, inputUnit) {
-            var _this2 = this;
-
-            var self = this;
-            _axios2.default.get('http://api.openweathermap.org/data/2.5/weather?q=' + searchTerm + '&APPID=' + this.state.appID + '&type=like&units=' + inputUnit).then(function (response) {
-                var firstResponse = response;
-                _this2.getForecastWeather(response.data.id, firstResponse, _this2.processForecastData);
-            }).catch(function (error) {
-                console.log(error);
-            });
+        return updatedTemp;
+      } else {
+        if (this.state.selectOption === "metric") {
+          updatedTemp = temp * 1.8 + 32;
+        } else {
+          updatedTemp = (temp - 32) / 1.8;
         }
-    }, {
-        key: 'getForecastWeather',
-        value: function getForecastWeather(cityID, firstResponse, callback) {
-            var self = this;
-            _axios2.default.get('http://api.openweathermap.org/data/2.5/forecast?id=' + cityID + '&APPID=' + this.state.appID + '&units=' + this.state.selectOption).then(function (response) {
-                self.setState({
-                    currSearchResult: firstResponse,
-                    temperature: firstResponse.data.main.temp,
-                    cityName: firstResponse.data.name,
-                    weatherType: firstResponse.data.weather[0].main,
-                    cityID: firstResponse.data.id,
-                    forecastData: response,
-                    testDate: response.data.list[0].dt,
-                    forecastList: [],
-                    hasRequested: true
-                });
-                callback();
-            }).catch(function (error) {
-                console.log(error);
-            });
+        this.setState({ temperature: updatedTemp.toFixed(2) });
+      }
+    }
+  }, {
+    key: "handleOptionChange",
+    value: function handleOptionChange(event) {
+      this.setState({ selectOption: event.target.value });
+      var forecastTemps = this.state.forecastTemps;
+
+      for (var temp in forecastTemps) {
+        var updatedTemp = this.changeTemperature(forecastTemps[temp].temp);
+        var updatedMaxTemp = this.changeTemperature(forecastTemps[temp].maxTemp);
+        forecastTemps[temp].temp = updatedTemp.toFixed(2);
+        forecastTemps[temp].maxTemp = updatedMaxTemp.toFixed(2);
+        console.log("​handleOptionChange -> forecastTemps[temp].maxTemp", forecastTemps[temp].maxTemp);
+      }
+
+      this.setState({
+        forecastTemps: forecastTemps
+      });
+
+      this.displayForecastList(this.state.forecastTemps);
+      this.changeTemperature();
+    }
+  }, {
+    key: "handleDateConversionToWeekday",
+    value: function handleDateConversionToWeekday(unixDate) {
+      var weekday = new Array(7);
+      weekday[0] = "Sunday";
+      weekday[1] = "Monday";
+      weekday[2] = "Tuesday";
+      weekday[3] = "Wednesday";
+      weekday[4] = "Thursday";
+      weekday[5] = "Friday";
+      weekday[6] = "Saturday";
+
+      var d = new Date(0);
+      d.setUTCSeconds(unixDate);
+      return weekday[d.getDay()];
+    }
+  }, {
+    key: "sortDates",
+    value: function sortDates(unsortedDates) {
+      var sortedDays = [];
+      var days = [];
+
+      for (var day in unsortedDates) {
+        days.push(day);
+      }
+
+      sortedDays = days.sort(function (a, b) {
+        return new Date(a.value).getDate() - new Date(b.value).getDate();
+      });
+      return sortedDays;
+    }
+  }, {
+    key: "retrieveWeatherIcon",
+    value: function retrieveWeatherIcon(weatherType) {
+      var forecastWeather = weatherType.toLowerCase();
+      var weatherIcon = "";
+
+      switch (forecastWeather) {
+        case "rain":
+          weatherIcon = "./img/004-rain.svg";
+
+          break;
+
+        case "clear":
+          weatherIcon = "./img/003-sun.svg";
+
+          break;
+
+        case "clouds":
+          weatherIcon = "./img/005-cloud.svg";
+
+          break;
+
+        default:
+          weatherIcon = "./img/003-sun.svg";
+
+          break;
+      }
+
+      return weatherIcon;
+    }
+  }, {
+    key: "processForecastData",
+    value: function processForecastData() {
+      var _this3 = this;
+
+      //Get array of data from state
+      var data = [];
+      var date = "";
+
+      var day1 = new Object();
+      var day2 = new Object();
+      var day3 = new Object();
+      var day4 = new Object();
+      var day5 = new Object();
+
+      data = this.state.forecastData.data.list;
+
+      //Reduce data into days of the week by matching dateTime to Weekday.
+
+      var weekdays = data.reduce(function (weekdays, day) {
+        date = _this3.handleDateConversionToWeekday(day.dt);
+        if (!weekdays[date]) {
+          weekdays[date] = [];
         }
-    }, {
-        key: 'onHandleChange',
-        value: function onHandleChange(event) {
-            this.setState({ searchTerm: event.target.value });
+        weekdays[date].push(day);
+        return weekdays;
+      }, {});
+
+      // Setup to reduce weather information into each Weekeday
+
+      var weatherAggregate = [];
+      var tempTotal = 0;
+      var tempStore = [];
+      var currDayWeather = "";
+
+      /* Loop through each record within each weekday, and output:
+              - Average temp
+              - Maximum temp
+              - Minimum Temp - to be implemented
+              - Weather Type
+          */
+
+      for (var record in weekdays) {
+        if (weekdays.hasOwnProperty(record)) {
+          var currDay = weekdays[record];
+          var convDate = this.handleDateConversionToWeekday(currDay[0].dt);
+          currDayWeather = currDay[0].weather[0].main;
+
+          for (var subData in currDay) {
+            var currTemp = currDay[subData].main.temp;
+            tempStore.push(currTemp);
+          }
+
+          // For each temperature, go through and calculate total.
+
+          tempStore.forEach(function (temp) {
+            tempTotal = tempTotal + temp;
+          });
+
+          // Calc average temperature
+
+          tempTotal = tempTotal / tempStore.length;
+
+          // Use reduce to work through each day to determine the maximum temperature.
+
+          var maxTemp = currDay.reduce(function (previous, record) {
+            return previous === undefined || record.main.temp_max > previous ? record.main.temp_max : previous;
+          }, undefined);
+
+          // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
+
+          var tempDate = {
+            date: convDate,
+            temp: tempTotal.toFixed(0),
+            maxTemp: maxTemp.toFixed(0),
+            weatherType: currDayWeather,
+            weatherIcon: this.retrieveWeatherIcon(currDayWeather)
+          };
+
+          weatherAggregate.push(tempDate);
+
+          tempStore = [];
+          tempTotal = 0;
         }
-    }, {
-        key: 'onSubmit',
-        value: function onSubmit(event) {
-            event.preventDefault();
-            this.initSearch(this.state.searchTerm, this.state.selectOption);
-        }
-    }, {
-        key: 'changeTemperature',
-        value: function changeTemperature(currTemp) {
-            var temp = this.state.temperature;
-            var updatedTemp = "";
+      }
 
-            if (currTemp) {
-                if (this.state.selectOption === 'metric') {
-                    updatedTemp = currTemp * 1.8 + 32;
-                } else {
-                    updatedTemp = (currTemp - 32) / 1.8;
-                }
-                return updatedTemp;
-            } else {
-                if (this.state.selectOption === 'metric') {
-                    updatedTemp = temp * 1.8 + 32;
-                } else {
-                    updatedTemp = (temp - 32) / 1.8;
-                }
-                this.setState({ temperature: updatedTemp.toFixed(2) });
-            }
-        }
-    }, {
-        key: 'handleOptionChange',
-        value: function handleOptionChange(event) {
-            this.setState({ selectOption: event.target.value });
-            var forecastTemps = this.state.forecastTemps;
+      this.displayForecastList(weatherAggregate);
+      console.log("​processForecastData -> weatherAggregate", weatherAggregate);
 
-            for (var temp in forecastTemps) {
-                var updatedTemp = this.changeTemperature(forecastTemps[temp].temp);
-                var updatedMaxTemp = this.changeTemperature(forecastTemps[temp].maxTemp);
-                forecastTemps[temp].temp = updatedTemp.toFixed(2);
-                forecastTemps[temp].maxTemp = updatedMaxTemp.toFixed(2);
-                console.log('​handleOptionChange -> forecastTemps[temp].maxTemp', forecastTemps[temp].maxTemp);
-            }
-
-            this.setState({
-                forecastTemps: forecastTemps
-            });
-
-            this.displayForecastList(this.state.forecastTemps);
-            this.changeTemperature();
-        }
-    }, {
-        key: 'handleDateConversionToWeekday',
-        value: function handleDateConversionToWeekday(unixDate) {
-
-            var weekday = new Array(7);
-            weekday[0] = "Sunday";
-            weekday[1] = "Monday";
-            weekday[2] = "Tuesday";
-            weekday[3] = "Wednesday";
-            weekday[4] = "Thursday";
-            weekday[5] = "Friday";
-            weekday[6] = "Saturday";
-
-            var d = new Date(0);
-            d.setUTCSeconds(unixDate);
-            return weekday[d.getDay()];
-        }
-    }, {
-        key: 'sortDates',
-        value: function sortDates(unsortedDates) {
-            var sortedDays = [];
-            var days = [];
-
-            for (var day in unsortedDates) {
-                days.push(day);
-            }
-
-            sortedDays = days.sort(function (a, b) {
-                return new Date(a.value).getDate() - new Date(b.value).getDate();
-            });
-            return sortedDays;
-        }
-    }, {
-        key: 'retrieveWeatherIcon',
-        value: function retrieveWeatherIcon(weatherType) {
-            var forecastWeather = weatherType.toLowerCase();
-            var weatherIcon = '';
-
-            switch (forecastWeather) {
-                case 'rain':
-                    weatherIcon = './img/004-rain.svg';
-
-                    break;
-
-                case 'clear':
-                    weatherIcon = './img/003-sun.svg';
-
-                    break;
-
-                case 'clouds':
-                    weatherIcon = './img/005-cloud.svg';
-
-                    break;
-
-                default:
-                    weatherIcon = './img/003-sun.svg';
-
-                    break;
-            }
-
-            return weatherIcon;
-        }
-    }, {
-        key: 'processForecastData',
-        value: function processForecastData() {
-            var _this3 = this;
-
-            //Get array of data from state
-            var data = [];
-            var date = "";
-
-            var day1 = new Object();
-            var day2 = new Object();
-            var day3 = new Object();
-            var day4 = new Object();
-            var day5 = new Object();
-
-            data = this.state.forecastData.data.list;
-
-            //Reduce data into days of the week by matching dateTime to Weekday.
-
-            var weekdays = data.reduce(function (weekdays, day) {
-                date = _this3.handleDateConversionToWeekday(day.dt);
-                if (!weekdays[date]) {
-                    weekdays[date] = [];
-                }
-                weekdays[date].push(day);
-                return weekdays;
-            }, {});
-
-            // Setup to reduce weather information into each Weekeday
-
-            var weatherAggregate = [];
-            var tempTotal = 0;
-            var tempStore = [];
-            var currDayWeather = "";
-
-            /* Loop through each record within each weekday, and output:
-                - Average temp
-                - Maximum temp
-                - Minimum Temp - to be implemented
-                - Weather Type
-            */
-
-            for (var record in weekdays) {
-                if (weekdays.hasOwnProperty(record)) {
-
-                    var currDay = weekdays[record];
-                    var convDate = this.handleDateConversionToWeekday(currDay[0].dt);
-                    currDayWeather = currDay[0].weather[0].main;
-
-                    for (var subData in currDay) {
-                        var currTemp = currDay[subData].main.temp;
-                        tempStore.push(currTemp);
-                    }
-
-                    // For each temperature, go through and calculate total. 
-
-                    tempStore.forEach(function (temp) {
-                        tempTotal = tempTotal + temp;
-                    });
-
-                    // Calc average temperature
-
-                    tempTotal = tempTotal / tempStore.length;
-
-                    // Use reduce to work through each day to determine the maximum temperature.
-
-                    var maxTemp = currDay.reduce(function (previous, record) {
-                        return previous === undefined || record.main.temp_max > previous ? record.main.temp_max : previous;
-                    }, undefined);
-
-                    // Final data per day. Output via component (mapped to .results-tiles element via displayForecastList())
-
-                    var tempDate = {
-                        date: convDate,
-                        temp: tempTotal.toFixed(0),
-                        maxTemp: maxTemp.toFixed(0),
-                        weatherType: currDayWeather,
-                        weatherIcon: this.retrieveWeatherIcon(currDayWeather)
-                    };
-
-                    weatherAggregate.push(tempDate);
-
-                    tempStore = [];
-                    tempTotal = 0;
-                }
-            }
-
-            this.displayForecastList(weatherAggregate);
-            console.log('​processForecastData -> weatherAggregate', weatherAggregate);
-
-            this.setState({
-                forecastTemps: weatherAggregate
-            });
-        }
-    }, {
-        key: 'displayForecastList',
-        value: function displayForecastList(list) {
-            var listItems = list.map(function (list) {
-                return _react2.default.createElement(
-                    'div',
-                    { className: 'results-tiles' },
-                    _react2.default.createElement(
-                        'li',
-                        { className: 'tile' },
-                        _react2.default.createElement(
-                            'ul',
-                            { className: 'tile__data' },
-                            _react2.default.createElement(
-                                'li',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    { className: 'tile__data__label--primary' },
-                                    list.date
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'li',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    { className: 'tile__data__label--weather' },
-                                    list.weatherType
-                                )
-                            ),
-                            _react2.default.createElement(
-                                'li',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    { className: 'tile__data__label' },
-                                    'Average:'
-                                ),
-                                ' ',
-                                list.temp,
-                                '\xB0'
-                            ),
-                            _react2.default.createElement(
-                                'li',
-                                null,
-                                _react2.default.createElement(
-                                    'label',
-                                    { className: 'tile__data__label' },
-                                    'Maximum:'
-                                ),
-                                ' ',
-                                list.maxTemp,
-                                '\xB0 '
-                            )
-                        ),
-                        _react2.default.createElement('img', { src: list.weatherIcon })
-                    )
-                );
-            });
-            this.setState({
-                forecastList: listItems
-            });
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                'form',
-                { onSubmit: this.onSubmit, className: 'search-form' },
+      this.setState({
+        forecastTemps: weatherAggregate
+      });
+    }
+  }, {
+    key: "displayForecastList",
+    value: function displayForecastList(list) {
+      var listItems = list.map(function (list) {
+        return _react2.default.createElement(
+          "div",
+          { className: "results-tiles" },
+          _react2.default.createElement(
+            "li",
+            { className: "tile" },
+            _react2.default.createElement(
+              "ul",
+              { className: "tile__data" },
+              _react2.default.createElement(
+                "li",
+                null,
                 _react2.default.createElement(
-                    'div',
-                    { className: 'search-form__search-group' },
-                    _react2.default.createElement('input', { type: 'text', value: this.state.searchTerm, onChange: this.onHandleChange, className: 'search-form__searchbar' }),
-                    _react2.default.createElement(
-                        'button',
-                        { className: 'search-form__search-bar__button', type: 'submit' },
-                        'Search now'
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'search-form__radio-group' },
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        ' Celsius ',
-                        _react2.default.createElement('input', { type: 'radio', value: 'metric', checked: this.state.selectOption === 'metric', onChange: this.handleOptionChange })
-                    ),
-                    _react2.default.createElement(
-                        'label',
-                        null,
-                        ' Fahrenheit ',
-                        _react2.default.createElement('input', { type: 'radio', value: 'imperial', checked: this.state.selectOption === 'imperial', onChange: this.handleOptionChange })
-                    )
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'search-form__results' },
-                    _react2.default.createElement(
-                        'h1',
-                        null,
-                        this.state.cityName
-                    ),
-                    _react2.default.createElement(
-                        'h3',
-                        null,
-                        this.handleDateConversionToWeekday(this.state.currentDay)
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        { className: 'search-form__results__tiles' },
-                        this.state.forecastList
-                    )
+                  "label",
+                  { className: "tile__data__label--primary" },
+                  list.date
                 )
-            );
-        }
-    }]);
+              ),
+              _react2.default.createElement(
+                "li",
+                null,
+                _react2.default.createElement(
+                  "label",
+                  { className: "tile__data__label--weather" },
+                  list.weatherType
+                )
+              ),
+              _react2.default.createElement(
+                "li",
+                null,
+                _react2.default.createElement(
+                  "label",
+                  { className: "tile__data__label" },
+                  "Average:"
+                ),
+                " ",
+                list.temp,
+                "\xB0"
+              ),
+              _react2.default.createElement(
+                "li",
+                null,
+                _react2.default.createElement(
+                  "label",
+                  { className: "tile__data__label" },
+                  "Maximum:"
+                ),
+                " ",
+                list.maxTemp,
+                "\xB0",
+                " "
+              )
+            ),
+            _react2.default.createElement("img", { src: list.weatherIcon })
+          )
+        );
+      });
+      this.setState({
+        forecastList: listItems
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return _react2.default.createElement(
+        "form",
+        { onSubmit: this.onSubmit, className: "search-form" },
+        _react2.default.createElement(
+          "div",
+          { className: "search-form__search-group" },
+          _react2.default.createElement("input", {
+            type: "text",
+            value: this.state.searchTerm,
+            onChange: this.onHandleChange,
+            className: "search-form__searchbar"
+          }),
+          _react2.default.createElement(
+            "button",
+            { className: "search-form__search-bar__button", type: "submit" },
+            "Search now"
+          )
+        ),
+        _react2.default.createElement(
+          "div",
+          { className: "search-form__radio-group" },
+          _react2.default.createElement(
+            "label",
+            null,
+            " ",
+            "Celsius",
+            " ",
+            _react2.default.createElement("input", {
+              type: "radio",
+              value: "metric",
+              checked: this.state.selectOption === "metric",
+              onChange: this.handleOptionChange
+            })
+          ),
+          _react2.default.createElement(
+            "label",
+            null,
+            " ",
+            "Fahrenheit",
+            " ",
+            _react2.default.createElement("input", {
+              type: "radio",
+              value: "imperial",
+              checked: this.state.selectOption === "imperial",
+              onChange: this.handleOptionChange
+            })
+          )
+        ),
+        _react2.default.createElement(
+          "div",
+          { className: "search-form__results" },
+          _react2.default.createElement(
+            "h1",
+            null,
+            this.state.cityName
+          ),
+          _react2.default.createElement(
+            "h3",
+            null,
+            this.handleDateConversionToWeekday(this.state.currentDay)
+          ),
+          _react2.default.createElement(
+            "div",
+            { className: "search-form__results__tiles" },
+            this.state.forecastList
+          )
+        )
+      );
+    }
+  }]);
 
-    return Cumulus;
+  return Cumulus;
 }(_react2.default.Component);
 
 exports.default = Cumulus;

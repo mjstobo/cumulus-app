@@ -138,14 +138,14 @@ label {
       -ms-flex-flow: row nowrap;
           flex-flow: row nowrap;
   list-style: none;
-  background-color: #BFD7EA;
+  background-color: whitesmoke;
   padding: 1%;
   margin: 1%;
   -webkit-transition: all 0.5s ease-in-out;
   transition: all 0.5s ease-in-out;
   -webkit-box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
           box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
-  color: white;
+  color: #2E294E;
   border-radius: 10px; }
   .tile img {
     width: 22.5%;

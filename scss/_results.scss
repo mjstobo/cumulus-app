@@ -8,13 +8,13 @@
     display: flex;
     flex-flow:  row nowrap;
     list-style: none;
-    background-color: $colour--neutral-2;
+    background-color: whitesmoke;
     padding: 1%;
     margin: 1%;
     transition: all 0.5s ease-in-out;
     box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
 
-    color: white;
+    color: $colour--secondary;
     border-radius: 10px;
 
     & img {
