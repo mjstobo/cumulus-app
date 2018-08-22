@@ -28,9 +28,7 @@ export default class Cumulus extends React.Component {
     this.handleOptionChange = this.handleOptionChange.bind(this);
     this.changeTemperature = this.changeTemperature.bind(this);
     this.getForecastWeather = this.getForecastWeather.bind(this);
-    this.handleDateConversionToWeekday = this.handleDateConversionToWeekday.bind(
-      this
-    );
+    this.handleDateConversionToWeekday = this.handleDateConversionToWeekday.bind(this);
     this.sortDates = this.sortDates.bind(this);
     this.processForecastData = this.processForecastData.bind(this);
     this.displayForecastList = this.displayForecastList.bind(this);
@@ -185,25 +183,20 @@ export default class Cumulus extends React.Component {
     switch (forecastWeather) {
       case "rain":
         weatherIcon = "./img/004-rain.svg";
-
         break;
 
       case "clear":
         weatherIcon = "./img/003-sun.svg";
-
         break;
 
       case "clouds":
         weatherIcon = "./img/005-cloud.svg";
-
         break;
 
       default:
         weatherIcon = "./img/003-sun.svg";
-
         break;
     }
-
     return weatherIcon;
   }
 
@@ -347,8 +340,7 @@ export default class Cumulus extends React.Component {
         </div>
         <div className="search-form__radio-group">
           <label>
-            {" "}
-            Celsius{" "}
+            {" "}Celsius{" "}
             <input
               type="radio"
               value="metric"
@@ -357,8 +349,7 @@ export default class Cumulus extends React.Component {
             />
           </label>
           <label>
-            {" "}
-            Fahrenheit{" "}
+            {" "}Fahrenheit{" "}
             <input
               type="radio"
               value="imperial"

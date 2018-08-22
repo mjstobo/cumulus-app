@@ -279,25 +279,20 @@ var Cumulus = function (_React$Component) {
       switch (forecastWeather) {
         case "rain":
           weatherIcon = "./img/004-rain.svg";
-
           break;
 
         case "clear":
           weatherIcon = "./img/003-sun.svg";
-
           break;
 
         case "clouds":
           weatherIcon = "./img/005-cloud.svg";
-
           break;
 
         default:
           weatherIcon = "./img/003-sun.svg";
-
           break;
       }
-
       return weatherIcon;
     }
   }, {
