@@ -1,4 +1,6 @@
 var path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 var webpack = require('webpack');
 
 module.exports = {
@@ -15,6 +17,13 @@ module.exports = {
     },
   stats: {
       colors: true
+  },
+  devServer: {
+    publicPath: '/',
+    contentBase: './',
+    hot: true,
+    compress: true,
+    port: 9000
   },
   devtool: 'source-map',
   mode: 'development'

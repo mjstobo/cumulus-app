@@ -95,7 +95,35 @@ export default class Cumulus extends React.Component {
   }
 
   onHandleChange(event) {
-    this.setState({ searchTerm: event.target.value });
+
+    let currVal = event.target.value;
+    var dataList = document.getElementById('cities');
+
+    if(currVal.length >= 3){
+      axios
+      .get(
+        "http://localhost:8000/cities/" +
+          currVal 
+      )
+      .then(response => {
+        let firstResponse = response.data;
+
+  firstResponse.forEach(city => {
+    console.log(city);
+    let option = document.createElement('option');
+    let cityDetail = city.name + ", " + city.country;
+    option.value = cityDetail;
+    dataList.appendChild(option);
+});
+
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+      this.setState({ searchTerm: event.target.value });
+    } else {
+      this.setState({ searchTerm: event.target.value });
+    }
   }
 
   onSubmit(event) {
@@ -327,11 +355,13 @@ export default class Cumulus extends React.Component {
   render() {
     return (
       <form onSubmit={this.onSubmit} className="search-form">
+        <datalist id="cities"></datalist>
         <div className="search-form__search-group">
           <input
             type="text"
             value={this.state.searchTerm}
             onChange={this.onHandleChange}
+            list="cities"
             className="search-form__searchbar"
           />
           <button className="search-form__search-bar__button" type="submit">
