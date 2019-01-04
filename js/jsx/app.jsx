@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import ReactDOM from "react-dom";
 
+
 export default class Cumulus extends React.Component {
   constructor(props) {
     super(props);
@@ -9,12 +10,13 @@ export default class Cumulus extends React.Component {
     this.state = {
       searchTerm: "",
       currSearchResult: [],
-      currentDay: "",
+      currentDay: new Date().getTime() / 1000, // Current date in Unix time
       appID: "ad68367b5cd8c50e58be5a2923aa7ff4",
       temperature: "",
       cityName: "",
       cityID: "",
       weatherType: "",
+      dataList: [],
       selectOption: "metric",
       forecastData: [],
       forecastList: [],
@@ -53,6 +55,7 @@ export default class Cumulus extends React.Component {
       )
       .then(response => {
         let firstResponse = response;
+      
         this.getForecastWeather(
           response.data.id,
           firstResponse,
@@ -65,7 +68,7 @@ export default class Cumulus extends React.Component {
   }
 
   getForecastWeather(cityID, firstResponse, callback) {
-    let self = this;
+    let self = this;    
     axios
       .get(
         "http://api.openweathermap.org/data/2.5/forecast?id=" +
@@ -97,7 +100,14 @@ export default class Cumulus extends React.Component {
   onHandleChange(event) {
 
     let currVal = event.target.value;
-    var dataList = document.getElementById('cities');
+    let dataList = [];
+    this.setState({
+      dataList: []
+    })
+
+    let foundCities = [];
+
+    // If greater than 3 input letters, begin async call to API
 
     if(currVal.length >= 3){
       axios
@@ -108,19 +118,43 @@ export default class Cumulus extends React.Component {
       .then(response => {
         let firstResponse = response.data;
 
+        // Within response, conduct logic to map matching records with countries for presentation. Push to array for later operation.
+
   firstResponse.forEach(city => {
-    console.log(city);
     let option = document.createElement('option');
     let cityDetail = city.name + ", " + city.country;
     option.value = cityDetail;
-    dataList.appendChild(option);
+    foundCities.push(option);
 });
+
+// Trim these returned cities to 10 responses for presentation
+
+    let trimmedCities = foundCities.slice(0,10);
+
+    
+    // Append all found responses to the dataList object in HTML
+
+    trimmedCities.forEach(city => {
+      dataList.push(<option value={city.value}>{city.value}</option>);
+    })
+
+    this.setState({
+      dataList: dataList
+    })
+   
+
+    // reset arrays for future use.
+
+    foundCities = [];
+    trimmedCities = [];
+    dataList = [];
 
       })
       .catch(function(error) {
         console.log(error);
       });
       this.setState({ searchTerm: event.target.value });
+      
     } else {
       this.setState({ searchTerm: event.target.value });
     }
@@ -190,6 +224,8 @@ export default class Cumulus extends React.Component {
     return weekday[d.getDay()];
   }
 
+// Date sorting unused currently, but worth keeping!
+
   sortDates(unsortedDates) {
     let sortedDays = [];
     let days = [];
@@ -233,12 +269,6 @@ export default class Cumulus extends React.Component {
     let data = [];
     let date = "";
 
-    let day1 = new Object();
-    let day2 = new Object();
-    let day3 = new Object();
-    let day4 = new Object();
-    let day5 = new Object();
-
     data = this.state.forecastData.data.list;
 
     //Reduce data into days of the week by matching dateTime to Weekday.
@@ -270,7 +300,7 @@ export default class Cumulus extends React.Component {
       if (weekdays.hasOwnProperty(record)) {
         let currDay = weekdays[record];
         let convDate = this.handleDateConversionToWeekday(currDay[0].dt);
-        currDayWeather = currDay[0].weather[0].main;
+        let dayOfMonth = new Date(currDay[0].dt);
 
         for (var subData in currDay) {
           let currTemp = currDay[subData].main.temp;
@@ -299,6 +329,8 @@ export default class Cumulus extends React.Component {
 
         let tempDate = {
           date: convDate,
+          dayOfMonth: dayOfMonth.getDate(),
+          currYear: dayOfMonth.getFullYear(),
           temp: tempTotal.toFixed(0),
           maxTemp: maxTemp.toFixed(0),
           weatherType: currDayWeather,
@@ -306,6 +338,7 @@ export default class Cumulus extends React.Component {
         };
 
         weatherAggregate.push(tempDate);
+
 
         tempStore = [];
         tempTotal = 0;
@@ -326,7 +359,7 @@ export default class Cumulus extends React.Component {
         <li className="tile">
           <ul className="tile__data">
             <li>
-              <label className="tile__data__label--primary">{list.date}</label>
+              <label className="tile__data__label--primary">{list.date}, {list.dayOfMonth} {list.currYear}</label>
             </li>
             <li>
               <label className="tile__data__label--weather">
@@ -355,7 +388,9 @@ export default class Cumulus extends React.Component {
   render() {
     return (
       <form onSubmit={this.onSubmit} className="search-form">
-        <datalist id="cities"></datalist>
+        <datalist id="cities">
+          {this.state.dataList}
+        </datalist>
         <div className="search-form__search-group">
           <input
             type="text"

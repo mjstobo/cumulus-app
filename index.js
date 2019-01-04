@@ -33759,6 +33759,7 @@ var Cumulus = function (_React$Component) {
     _this.processForecastData = _this.processForecastData.bind(_this);
     _this.displayForecastList = _this.displayForecastList.bind(_this);
     _this.retrieveWeatherIcon = _this.retrieveWeatherIcon.bind(_this);
+    _this.removeChildNode = _this.removeChildNode.bind(_this);
     return _this;
   }
 
@@ -33840,8 +33841,8 @@ var Cumulus = function (_React$Component) {
           trimmedCities.forEach(function (city) {
             dataList.push(_react2.default.createElement(
               "option",
-              { value: city.value },
-              city.value
+              { value: city },
+              city
             ));
           });
 
@@ -34137,7 +34138,7 @@ var Cumulus = function (_React$Component) {
         _react2.default.createElement(
           "datalist",
           { id: "cities" },
-          this.state.dataList
+          this.dataList
         ),
         _react2.default.createElement(
           "div",

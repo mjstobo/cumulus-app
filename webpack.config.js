@@ -6,7 +6,8 @@ var webpack = require('webpack');
 module.exports = {
     entry: ['babel-polyfill', './js/main.jsx'],
     output: {
-        filename: "index.js"
+        filename: "index.js",
+        path: path.resolve(__dirname, 'dist')
     },
     module: {
         rules: [
@@ -25,6 +26,5 @@ module.exports = {
     compress: true,
     port: 9000
   },
-  devtool: 'source-map',
-  mode: 'development'
+  devtool: 'source-map'
 };
