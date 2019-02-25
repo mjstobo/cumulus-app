@@ -359,7 +359,7 @@ export default class Cumulus extends React.Component {
         <li className="tile">
           <ul className="tile__data">
             <li>
-              <label className="tile__data__label--primary">{list.date}, {list.dayOfMonth} {list.currYear}</label>
+              <label className="tile__data__label--primary">{list.date}, {list.dayOfMonth}</label>
             </li>
             <li>
               <label className="tile__data__label--weather">
